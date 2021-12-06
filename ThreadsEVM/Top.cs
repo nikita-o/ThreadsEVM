@@ -4,39 +4,24 @@ using System.Text;
 
 namespace ThreadsEVM
 {
-    class Top
+    abstract class Top
     {
-        //public delegate List<int> Func(List<int> opr);
-
-        //// Comand
-        //public Func opc;
+        // Comand
         public int[] data; // (opr) - входные данные
-        public (Top t, int id)[] output; // (des) - дуги по которым идет результат
+        public List<(int id, int i, int data)> output; // (des) - дуги по которым идет результат
 
         // Control
         public bool[] checkData; // (pres) - флаги получения входных данных
-        //public Top[] parents;
 
         virtual public bool isReady()
         {
             foreach (var flag in checkData)
-            {
                 if (!flag)
-                {
                     return false;
-                }
-            }
             return true;
         }
 
-        virtual public List<Top> work()
-        {
-            //return new Top[]{ };
-            // Исполнить функцию
-            // заполнить выходные данные для следующих вершин (+ установки их флагов)
-            // обнулить свои флаги данных
-            // вызвать следующие вершины + родительские (вроде не важен порядок) (return кого вызвать)
-        }
+        abstract public List<(int id, int i, int data)> work();
     }
 
     class OperTop: Top // 1-2 (n) - входа, 1 (n) выход
@@ -45,46 +30,39 @@ namespace ThreadsEVM
 
         Func func;
 
-        override public List<Top> work()
+        override public List<(int id, int i, int data)> work()
         {
-            List<Top> res = new List<Top>();
-
             int[] outData = func(data);
-            for (int i = 0; i < output.Length; i++)
+
+            for (int i = 0; i < output.Count; i++)
             {
-                (Top t, int id) = output[i];
-                t.data[id] = outData[i];
-                t.checkData[id] = true;
-                res.Add(t);
+                (int id, int i, int data) lol = output[i];
+                lol.data = outData[i];
+                output[i] = lol;
             }
 
             for (int i = 0; i < checkData.Length; i++)
-            {
                 checkData[i] = false;
-            }
-            return res;
+
+            return output;
         }
     }
 
     class BranchTop: Top // 1 - вход, 2 (n) выхода
     {
-        override public List<Top> work()
+        override public List<(int id, int i, int data)> work()
         {
-            List<Top> res = new List<Top>();
-            foreach (var item in output)
+            for (int i = 0; i < output.Count; i++)
             {
-                (Top t, int id) = item;
-                t.data[id] = data[0];
-                t.checkData[id] = true;
-                res.Add(t);
+                (int id, int i, int data) lol = output[i];
+                lol.data = data[0];
+                output[i] = lol;
             }
 
             for (int i = 0; i < checkData.Length; i++)
-            {
                 checkData[i] = false;
-            }
-            
-            return res;
+
+            return output;
         }
     }
 
@@ -93,114 +71,99 @@ namespace ThreadsEVM
         override public bool isReady()
         {
             foreach (bool flag in checkData)
-            {
                 if (flag)
-                {
                     return true;
-                }
-            }
             return false;
         }
 
-        override public List<Top> work()
+        override public List<(int id, int i, int data)> work()
         {
-            List<Top> res = new List<Top>();
-
             for (int i = 0; i < checkData.Length; i++)
             {
                 if (checkData[i])
                 {
-                    (Top t, int id) = output[0];
-                    t.data[id] = data[i];
-                    t.checkData[id] = true;
-                    res.Add(t);
+                    (int id, int i, int data) lol = output[0];
+                    lol.data = data[i];
+                    output[i] = lol;
                 }
             }
             
 
             for (int i = 0; i < checkData.Length; i++)
-            {
                 checkData[i] = false;
-            }
 
-            return res;
+            return output;
         }
     }
 
     class TFTop: Top // 1 - вход, 2 выхода, 1 управляющий (data[0])
     {
-        override public List<Top> work()
+        override public List<(int id, int i, int data)> work()
         {
-            List<Top> res = new List<Top>();
+            List<(int id, int i, int data)> res = new List<(int id, int i, int data)>(1);
 
             if (data[0] != 0)
             {
-                (Top t, int id) = output[0];
-                t.data[id] = data[1];
-                t.checkData[id] = true;
-                res.Add(t);
+                (int id, int i, int data) lol = output[0];
+                lol.data = data[1];
+                res[0] = lol;
             }
             else
             {
-                (Top t, int id) = output[1];
-                t.data[id] = data[1];
-                t.checkData[id] = true;
-                res.Add(t);
+                (int id, int i, int data) lol = output[1];
+                lol.data = data[1];
+                res[0] = lol;
             }
 
             for (int i = 0; i < checkData.Length; i++)
-            {
                 checkData[i] = false;
-            }
             return res;
         }
     }
+
     class ValveTop: Top // 1 - вход, 1 выход, 1 управляющий (data[0])
     {
-        override public List<Top> work()
+        override public List<(int id, int i, int data)> work()
         {
-            List<Top> res = new List<Top>();
-
             if (data[0] != 0)
             {
-                (Top t, int id) = output[0];
-                t.data[id] = data[1];
-                t.checkData[id] = true;
-                res.Add(t);
+                (int id, int i, int data) lol = output[0];
+                lol.data = data[1];
+                output[0] = lol;
             }
 
             for (int i = 0; i < checkData.Length; i++)
-            {
                 checkData[i] = false;
-            }
-            return res;
-        }
-    }
-
-    class ThreadTop: Top // 1 выход
-    {
-
-        override public List<Top> work()
-        {
-            List<Top> res = new List<Top>();
-
-
-
             
-            return res;
+            return output;
         }
     }
 
-    class OutTop: Top // 1 вход
+    class InputTop: Top // 1 выход
     {
-        override public List<Top> work()
+        Queue<int> input;
+
+        override public List<(int id, int i, int data)> work()
         {
-            List<Top> res = new List<Top>();
+            (int id, int i, int data) lol = output[0];
+            lol.data = input.Dequeue();
+            output[0] = lol;
 
+            if (input.Count == 0)
+            {
+                checkData[0] = false;
+            }
+            
+            return output;
+        }
+    }
 
-
-
-            return res;
+    class OutputTop: Top // 1 вход
+    {
+        override public List<(int id, int i, int data)> work()
+        {
+            // вывод data[0]...
+            return new List<(int id, int i, int data)>();
         }
     }
 }

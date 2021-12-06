@@ -12,9 +12,11 @@ namespace ThreadsEVM
 {
     public partial class Form1 : Form
     {
+        Evm evm;
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -22,22 +24,17 @@ namespace ThreadsEVM
 
         }
 
+        // компиляция
         private void button1_Click(object sender, EventArgs e)
         {
+            Evm evm = new Evm(Parsing.parsing("123"));
+        }
 
-            Parsing pars = new Parsing();
-            pars.parsing(textBox1.Lines);
-            //string x,z="";
-            //string[] y;
-            //x= textBox1.Text;
-            //label1.Text = textBox1.Text;
-            //y = x.Split('\n');
-            //label1.Text = y.Length.ToString();
-            ////for (int i = 0; i < 6; i++)
-            ////{
-            ////    z += y[i]+"zz";
-            ////}
-            //textBox2.Text = z;
+        // запуск
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+            evm.start(int[,] data); 
         }
     }
 }
