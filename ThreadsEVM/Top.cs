@@ -26,18 +26,18 @@ namespace ThreadsEVM
 
     class OperTop: Top // 1-2 (n) - входа, 1 (n) выход
     {
-        delegate int[] Func(int[] data);
+        public delegate int Func(int[] data);
 
-        Func func;
+        public Func func;
 
         override public List<(int id, int i, int data)> work()
         {
-            int[] outData = func(data);
+            int outData = func(data);
 
             for (int i = 0; i < output.Count; i++)
             {
                 (int id, int i, int data) lol = output[i];
-                lol.data = outData[i];
+                lol.data = outData;
                 output[i] = lol;
             }
 
@@ -141,7 +141,7 @@ namespace ThreadsEVM
 
     class InputTop: Top // 1 выход
     {
-        Queue<int> input;
+        public Queue<int> input;
 
         override public List<(int id, int i, int data)> work()
         {
@@ -163,7 +163,7 @@ namespace ThreadsEVM
         override public List<(int id, int i, int data)> work()
         {
             // вывод data[0]...
-            return new List<(int id, int i, int data)>();
+            return new List<(int id, int i, int data)>(0);
         }
     }
 }

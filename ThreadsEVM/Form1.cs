@@ -27,14 +27,15 @@ namespace ThreadsEVM
         // компиляция
         private void button1_Click(object sender, EventArgs e)
         {
-            Evm evm = new Evm(Parsing.parsing("123"));
+            Parsing parsing = new Parsing();
+
+            Evm evm = new Evm();
         }
 
         // запуск
         private void button2_Click(object sender, EventArgs e)
         {
-
-            evm.start(int[,] data); 
+            
         }
     }
 }
