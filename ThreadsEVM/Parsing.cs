@@ -17,12 +17,12 @@ namespace ThreadsEVM
         (int, int, Top) check(String str)
         {
             Top top;
-            switch (str)
+            switch (str.ToLower())
             {
                 case "input":
                     out_count = 1;
                     inp_count = 0;
-                    top = new InputTop();
+                    top = new OperTop();
                     break;
                 case "oper1":
                     out_count = 1;
@@ -44,12 +44,12 @@ namespace ThreadsEVM
                     inp_count = 2;
                     top = new MergeTop();
                     break;
-                case "TF":
+                case "tf":
                     out_count = 2;
                     inp_count = 2;
                     top = new TFTop();
                     break;
-                case "Valve":
+                case "valve":
                     out_count = 1;
                     inp_count = 2;
                     top = new ValveTop();
@@ -65,7 +65,7 @@ namespace ThreadsEVM
             }
             return (inp_count, out_count, top);
         }
-        void parsing(String[] text)
+        public void parsing(String[] text)
         {
             string[] str;
             List<string[]> save_str = new List<string[]>();
@@ -105,27 +105,6 @@ namespace ThreadsEVM
 
             }
             ////PROVERKA
-            //int[] line_sum =new int[text.Length], column_sum = new int[text.Length];
-            //for (int i = 0; i < text.Length; i++)
-            //{
-
-            //    for (int j = 0; j < text.Length; j++)
-            //    {
-            //        line_sum[i] += matrix_out[i, j];
-            //        column_sum[j] += matrix_out[i, j];
-            //    }
-            //}
-
-            //for (int i = 0; i < text.Length; i++)
-            //{
-            //    id = Int32.Parse(save_str[i][0]);
-            //    (int inp, int outp, Top top) = check(save_str[i][1]);
-            //    if (outp < line_sum[i] || inp < column_sum[i])
-            //    {
-            //        throw new Exception($"Wrong Count, {i} str ");
-            //    }
-            //}
-
             int[] line_sum = new int[text.Length], column_sum = new int[text.Length];
             for (int i = 0; i < text.Length; i++)
             {
@@ -133,8 +112,12 @@ namespace ThreadsEVM
                 for (int j = 0; j < text.Length; j++)
                 {
                     line_sum[i] += matrix_out[i, j];
-                    column_sum[j] += matrix_out[j, i];
+                    column_sum[j] += matrix_out[i, j];
                 }
+            }
+
+            for (int i = 0; i < text.Length; i++)
+            {
                 id = Int32.Parse(save_str[i][0]);
                 (int inp, int outp, Top top) = check(save_str[i][1]);
                 if (outp < line_sum[i] || inp < column_sum[i])
@@ -142,6 +125,23 @@ namespace ThreadsEVM
                     throw new Exception($"Wrong Count, {i} str ");
                 }
             }
+
+            //int[] line_sum = new int[text.Length], column_sum = new int[text.Length];
+            //for (int i = 0; i < text.Length; i++)
+            //{
+
+            //    for (int j = 0; j < text.Length; j++)
+            //    {
+            //        line_sum[i] += matrix_out[i, j];
+            //        column_sum[j] += matrix_out[j, i];
+            //    }
+            //    id = Int32.Parse(save_str[i][0]);
+            //    (int inp, int outp, Top top) = check(save_str[i][1]);
+            //    if (outp < line_sum[i] || inp < column_sum[i])
+            //    {
+            //        throw new Exception($"Wrong Count, {i} str ");
+            //    }
+            //}
 
 
 
