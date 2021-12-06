@@ -7,14 +7,14 @@ namespace ThreadsEVM
     class Parsing
     {
         int[,] matrix_inp, matrix_out;
-
+        List<int> inputs = new List<int>(), outputs = new List<int>();
         int id,
             out_count,
             inp_count;
         Top[] tops;
-        
+
         //проверяем максимальное колличество входов и выходов у вершины
-        (int, int, Top) check(String str)
+        (int, int, Top) check(String str, string name = "")
         {
             Top top;
             switch (str.ToLower())
@@ -22,12 +22,13 @@ namespace ThreadsEVM
                 case "input":
                     out_count = 1;
                     inp_count = 0;
-                    top = new OperTop();
+                    top = new InputTop();
                     break;
                 case "oper1":
                     out_count = 1;
                     inp_count = 1;
                     top = new OperTop();
+                    ((OperTop)top).func = check_func(name);
                     break;
                 case "oper2":
                     out_count = 1;
@@ -57,13 +58,45 @@ namespace ThreadsEVM
                 case "output":
                     out_count = 0;
                     inp_count = 1;
-                    top = new OutTop();
+                    top = new OutputTop();
                     break;
                 default:
                     throw new Exception("Wrong top name");
                     break;
             }
             return (inp_count, out_count, top);
+        }
+
+        OperTop.Func check_func(String str)
+        {
+            switch (str.ToLower())
+            {
+                case "sum":
+                    return Operations.Sum;
+                case "mul":
+                    return Operations.Mul;
+                case "div":
+                    return Operations.Div;
+                case "mod":
+                    return Operations.Mod;
+                case "inc":
+                    return Operations.Inc;
+                case "dec":
+                    return Operations.Dec;
+                case "more":
+                    return Operations.More;
+                case "small":
+                    return Operations.Small;
+                case "equals":
+                    return Operations.Equals;
+                case "consttrue":
+                    return Operations.constTrue;
+                case "constfalse":
+                    return Operations.constFalse;
+                default:
+                    throw new Exception("Wrong func name");
+                    break;
+            }
         }
         public void parsing(String[] text)
         {
@@ -94,13 +127,13 @@ namespace ThreadsEVM
                 }
 
 
-                (int inp, int outp, Top top) = check(str[1]);
+                (int inp, int outp, Top top) = check(str[1], str[2]);
 
                 for (int j = 0; j < outp; j++)
                 {
                     string[] string_out = str[3 + j].Split('-');
-                    int out1 = Int32.Parse(string_out[0]);                   
-                    matrix_out[id, out1] = 1;                   
+                    int out1 = Int32.Parse(string_out[0]);
+                    matrix_out[id, out1] = 1;
                 }
 
             }
@@ -120,28 +153,40 @@ namespace ThreadsEVM
             {
                 id = Int32.Parse(save_str[i][0]);
                 (int inp, int outp, Top top) = check(save_str[i][1]);
+
+                if (outp == 1 && inp == 0)
+                {
+                    inputs.Add(id);
+                }
+
+                if (outp == 0 && inp == 1)
+                {
+                    outputs.Add(id);
+                }
+
                 if (outp < line_sum[i] || inp < column_sum[i])
                 {
                     throw new Exception($"Wrong Count, {i} str ");
                 }
             }
+            ////////////////////////////////////////////////////////////////
+            ///
+            for (int i = 0; i < text.Length; i++)
+            {
+                //save_str[i][3];
+                (int inp, int outp, Top top) = check(save_str[i][1], save_str[i][2]);
+                for (int j = 0; j < outp; j++)
+                {
+                    string[] string_out = save_str[i][3 + j].Split('-');
+                    id = Int32.Parse(save_str[i][0]);
+                    int out1 = Int32.Parse(string_out[0]);
+                    int out2 = Int32.Parse(string_out[1]);
+                    tops[id].output.Add((out1, out2, 0));
 
-            //int[] line_sum = new int[text.Length], column_sum = new int[text.Length];
-            //for (int i = 0; i < text.Length; i++)
-            //{
+                }
+            }
 
-            //    for (int j = 0; j < text.Length; j++)
-            //    {
-            //        line_sum[i] += matrix_out[i, j];
-            //        column_sum[j] += matrix_out[j, i];
-            //    }
-            //    id = Int32.Parse(save_str[i][0]);
-            //    (int inp, int outp, Top top) = check(save_str[i][1]);
-            //    if (outp < line_sum[i] || inp < column_sum[i])
-            //    {
-            //        throw new Exception($"Wrong Count, {i} str ");
-            //    }
-            //}
+
 
 
 
