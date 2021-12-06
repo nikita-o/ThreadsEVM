@@ -21,5 +21,22 @@ namespace ThreadsEVM
         {
 
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+           
+            string x,z="";
+            string[] y;
+            x= textBox1.Text;
+            label1.Text = textBox1.Text;
+            y = x.Split('\n');
+            label1.Text = y.Length.ToString();
+            //for (int i = 0; i < 6; i++)
+            //{
+            //    z += y[i]+"zz";
+            //}
+            textBox2.Text = z;
+        }
     }
 }
