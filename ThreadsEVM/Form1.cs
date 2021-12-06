@@ -12,14 +12,29 @@ namespace ThreadsEVM
 {
     public partial class Form1 : Form
     {
+        Evm evm;
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         private void label3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        // компиляция
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Evm evm = new Evm(Parsing.parsing("123"));
+        }
+
+        // запуск
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+            evm.start(int[,] data); 
         }
     }
 }
