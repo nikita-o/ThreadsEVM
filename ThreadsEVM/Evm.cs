@@ -26,19 +26,26 @@ namespace ThreadsEVM
             this.output = output;
             this.textBox = textBox;
 
-            mem = new Queue<int>();
-            foreach (var item in input)
-                mem.Enqueue(item);
+
         }
 
         public void start(Queue<int>[] data)
         {
+            foreach (var top in tops)
+            {
+                top.reload();
+            }
+
             for (int i = 0; i < input.Count; i++)
             {
                 int id = input[i];
                 InputTop top = (InputTop)tops[id];
                 top.input = data[i];
             }
+
+            mem = new Queue<int>();
+            foreach (var item in input)
+                mem.Enqueue(item);
 
             while (mem.Count > 0)
             {
@@ -55,7 +62,7 @@ namespace ThreadsEVM
                 if (output.Count == 0)
                 {
                     // вывод data[0]
-                    textBox.AppendText(top.data[0].ToString() + '\n');
+                    textBox.AppendText(top.data[0].ToString() + "\r\n");
                 }
 
                 foreach (var item in output)

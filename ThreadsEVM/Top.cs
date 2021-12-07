@@ -17,6 +17,14 @@ namespace ThreadsEVM
         {
         }
 
+        virtual public void reload()
+        {
+            for (int i = 0; i < checkData.Length; i++)
+            {
+                checkData[i] = false;
+            }
+        }
+
         virtual public bool isReady()
         {
             foreach (var flag in checkData)
@@ -207,6 +215,15 @@ namespace ThreadsEVM
             checkData = new bool[1];
             checkData[0] = true;
         }
+        override public void reload()
+        {
+            for (int i = 0; i < checkData.Length; i++)
+            {
+                checkData[i] = false;
+            }
+            checkData[0] = true;
+        }
+
 
         override public List<(int id, int i, int data)> work()
         {

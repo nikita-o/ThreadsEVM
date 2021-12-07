@@ -114,7 +114,7 @@ namespace ThreadsEVM
                 save_str.Add(str);
                 if (str.Length != 5)
                 {
-                    throw new Exception("Wrong Count params");
+                    throw new Exception($"Wrong Count params {i} str");
                 }
 
                 try
@@ -185,6 +185,10 @@ namespace ThreadsEVM
                     string[] string_out = save_str[i][3 + j].Split('-');
                     int out1 = Int32.Parse(string_out[0]);
                     int out2 = Int32.Parse(string_out[1]);
+                    if (out2!= 0 || out2!=1)
+                    {
+                        throw new Exception($"Wrong out arc, {i} str ");
+                    }
                     tops[id].output.Add((out1, out2, 0));
 
                 }

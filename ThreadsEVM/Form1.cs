@@ -29,9 +29,22 @@ namespace ThreadsEVM
         {
             Parsing parsing = new Parsing();
 
-            parsing.parsing(textBox1.Lines);
+            try
+            {
+                parsing.parsing(textBox1.Lines);
+                evm = new Evm(ref parsing.tops, ref parsing.matrix_out, ref parsing.inputs, ref parsing.outputs, ref textBox3);
+                button2.Enabled = true;
+                textBox3.AppendText("Компиляция успешна!" + "\r\n");
+                //textBox3.Lines.Append("Компиляция успешна!");
+                //textBox3.AppendText(")
+            }
+            catch (Exception err)
+            {
+                textBox3.AppendText(err.Message + "\r\n");
+                //textBox3.Lines.Append(err.Message);
+            }
 
-            evm = new Evm(ref parsing.tops, ref parsing.matrix_out, ref parsing.inputs, ref parsing.outputs, ref textBox3);
+
 
 
         }
@@ -52,6 +65,11 @@ namespace ThreadsEVM
             }
 
             evm.start(data);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            textBox3.Text = "";
         }
     }
 }

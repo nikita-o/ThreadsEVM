@@ -40,12 +40,12 @@ namespace ThreadsEVM
 
         static public int  More(int[] data)
         {
-            return data[0] > data[1] ? 1 : 0;
+            return data[0] > data[1] ? data[0] : data[1];
         }
 
         static public int Small(int[] data)
         {
-            return data[0] < data[1] ? 1 : 0;
+            return data[0] < data[1] ? data[0] : data[1];
         }
 
         static public int Equals(int[] data)
