@@ -75,7 +75,10 @@ namespace ThreadsEVM
                 {
                     if (matrix[i, id] != 0)
                     {
-                        mem.Enqueue(i);
+                        if (tops[i].isReady())
+                        { 
+                            mem.Enqueue(i);
+                        }
                     }
                 }
 

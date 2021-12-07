@@ -6,6 +6,8 @@ namespace ThreadsEVM
 {
     static class Operations
     {
+        public delegate int Func(int[] data);
+
         static public int Sum(int[] data)
         {
             return data[0] + data[1];

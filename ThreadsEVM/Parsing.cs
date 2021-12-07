@@ -27,14 +27,14 @@ namespace ThreadsEVM
                 case "oper1":
                     out_count = 1;
                     inp_count = 1;
-                    top = new OperTop();
-                    ((OperTop)top).func = check_func(name);
+                    top = new OperTop1();
+                    ((OperTop1)top).func = check_func(name);
                     break;
                 case "oper2":
                     out_count = 1;
                     inp_count = 2;
-                    top = new OperTop();
-                    ((OperTop)top).func = check_func(name);
+                    top = new OperTop2();
+                    ((OperTop2)top).func = check_func(name);
                     break;
                 case "branch":
                     out_count = 2;
@@ -68,7 +68,7 @@ namespace ThreadsEVM
             return (inp_count, out_count, top);
         }
 
-        OperTop.Func check_func(String str)
+        Operations.Func check_func(String str)
         {
             switch (str.ToLower())
             {

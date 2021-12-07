@@ -13,7 +13,7 @@ namespace ThreadsEVM
         // Control
         public bool[] checkData; // (pres) - флаги получения входных данных
 
-        Top()
+        public Top()
         {
         }
 
@@ -28,11 +28,44 @@ namespace ThreadsEVM
         abstract public List<(int id, int i, int data)> work();
     }
 
-    class OperTop: Top // 1-2 (n) - входа, 1 (n) выход
+    class OperTop1: Top // 1-2 (n) - входа, 1 (n) выход
     {
-        public delegate int Func(int[] data);
+        public Operations.Func func;
 
-        public Func func;
+        public OperTop1(): base()
+        {
+            data = new int[1];
+            checkData = new bool[1];
+        }
+
+        override public List<(int id, int i, int data)> work()
+        {
+            int outData = func(data);
+
+            for (int i = 0; i < output.Count; i++)
+            {
+                (int id, int i, int data) lol = output[i];
+                lol.data = outData;
+                output[i] = lol;
+            }
+
+            for (int i = 0; i < checkData.Length; i++)
+                checkData[i] = false;
+
+            return output;
+        }
+    }
+
+    class OperTop2 : Top // 1-2 (n) - входа, 1 (n) выход
+    {
+
+        public Operations.Func func;
+
+        public OperTop2() : base()
+        {
+            data = new int[2];
+            checkData = new bool[2];
+        }
 
         override public List<(int id, int i, int data)> work()
         {
@@ -54,6 +87,12 @@ namespace ThreadsEVM
 
     class BranchTop: Top // 1 - вход, 2 (n) выхода
     {
+        public BranchTop() : base()
+        {
+            data = new int[1];
+            checkData = new bool[1];
+        }
+
         override public List<(int id, int i, int data)> work()
         {
             for (int i = 0; i < output.Count; i++)
@@ -72,6 +111,11 @@ namespace ThreadsEVM
 
     class MergeTop: Top // 2 (n) - входа, 1 выход
     {
+        public MergeTop() : base()
+        {
+            data = new int[2];
+            checkData = new bool[2];
+        }
         override public bool isReady()
         {
             foreach (bool flag in checkData)
@@ -88,7 +132,7 @@ namespace ThreadsEVM
                 {
                     (int id, int i, int data) lol = output[0];
                     lol.data = data[i];
-                    output[i] = lol;
+                    output[0] = lol;
                 }
             }
             
@@ -102,21 +146,27 @@ namespace ThreadsEVM
 
     class TFTop: Top // 1 - вход, 2 выхода, 1 управляющий (data[0])
     {
+        public TFTop() : base()
+        {
+            data = new int[2];
+            checkData = new bool[2];
+        }
+
         override public List<(int id, int i, int data)> work()
         {
-            List<(int id, int i, int data)> res = new List<(int id, int i, int data)>(1);
+            List<(int id, int i, int data)> res = new List<(int id, int i, int data)>();
 
             if (data[0] != 0)
             {
                 (int id, int i, int data) lol = output[0];
                 lol.data = data[1];
-                res[0] = lol;
+                res.Add(lol);
             }
             else
             {
                 (int id, int i, int data) lol = output[1];
                 lol.data = data[1];
-                res[0] = lol;
+                res.Add(lol);
             }
 
             for (int i = 0; i < checkData.Length; i++)
@@ -127,6 +177,11 @@ namespace ThreadsEVM
 
     class ValveTop: Top // 1 - вход, 1 выход, 1 управляющий (data[0])
     {
+        public ValveTop() : base()
+        {
+            data = new int[2];
+            checkData = new bool[2];
+        }
         override public List<(int id, int i, int data)> work()
         {
             if (data[0] != 0)
@@ -147,6 +202,12 @@ namespace ThreadsEVM
     {
         public Queue<int> input;
 
+        public InputTop() : base()
+        {
+            checkData = new bool[1];
+            checkData[0] = true;
+        }
+
         override public List<(int id, int i, int data)> work()
         {
             (int id, int i, int data) lol = output[0];
@@ -157,6 +218,7 @@ namespace ThreadsEVM
             {
                 checkData[0] = false;
             }
+
             
             return output;
         }
@@ -164,10 +226,16 @@ namespace ThreadsEVM
 
     class OutputTop: Top // 1 вход
     {
+        public OutputTop() : base()
+        {
+            data = new int[1];
+            checkData = new bool[1];
+        }
+
         override public List<(int id, int i, int data)> work()
         {
             // вывод data[0]...
-            return new List<(int id, int i, int data)>(0);
+            return new List<(int id, int i, int data)>();
         }
     }
 }
