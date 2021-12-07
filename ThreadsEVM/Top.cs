@@ -6,23 +6,25 @@ namespace ThreadsEVM
 {
     abstract class Top
     {
+        public struct Output
+        {
+            public int idTop;
+            public int idIn;
+            public int data;
+        }
+
         // Comand
         public int[] data; // (opr) - входные данные
-        public List<(int id, int i, int data)> output; // (des) - дуги по которым идет результат
+        public Output[] outputs; // (des) - дуги по которым идет результат
 
         // Control
         public bool[] checkData; // (pres) - флаги получения входных данных
 
-        public Top()
-        {
-        }
+        public Top() {}
 
-        virtual public void reload()
+        public void reload()
         {
-            for (int i = 0; i < checkData.Length; i++)
-            {
-                checkData[i] = false;
-            }
+            Array.Fill(checkData, false);
         }
 
         virtual public bool isReady()
@@ -33,7 +35,7 @@ namespace ThreadsEVM
             return true;
         }
 
-        abstract public List<(int id, int i, int data)> work();
+        abstract public Output[] work();
     }
 
     class OperTop1: Top // 1-2 (n) - входа, 1 (n) выход
@@ -46,21 +48,15 @@ namespace ThreadsEVM
             checkData = new bool[1];
         }
 
-        override public List<(int id, int i, int data)> work()
+        override public Output[] work()
         {
             int outData = func(data);
 
-            for (int i = 0; i < output.Count; i++)
-            {
-                (int id, int i, int data) lol = output[i];
-                lol.data = outData;
-                output[i] = lol;
-            }
+            outputs[0].data = outData;
 
-            for (int i = 0; i < checkData.Length; i++)
-                checkData[i] = false;
+            Array.Fill(checkData, false);
 
-            return output;
+            return outputs;
         }
     }
 
@@ -75,21 +71,15 @@ namespace ThreadsEVM
             checkData = new bool[2];
         }
 
-        override public List<(int id, int i, int data)> work()
+        override public Output[] work()
         {
             int outData = func(data);
 
-            for (int i = 0; i < output.Count; i++)
-            {
-                (int id, int i, int data) lol = output[i];
-                lol.data = outData;
-                output[i] = lol;
-            }
+            outputs[0].data = outData;
 
-            for (int i = 0; i < checkData.Length; i++)
-                checkData[i] = false;
+            Array.Fill(checkData, false);
 
-            return output;
+            return outputs;
         }
     }
 
@@ -101,19 +91,14 @@ namespace ThreadsEVM
             checkData = new bool[1];
         }
 
-        override public List<(int id, int i, int data)> work()
+        override public Output[] work()
         {
-            for (int i = 0; i < output.Count; i++)
-            {
-                (int id, int i, int data) lol = output[i];
-                lol.data = data[0];
-                output[i] = lol;
-            }
+            outputs[0].data = data[0];
+            outputs[1].data = data[0];
 
-            for (int i = 0; i < checkData.Length; i++)
-                checkData[i] = false;
+            Array.Fill(checkData, false);
 
-            return output;
+            return outputs;
         }
     }
 
@@ -124,6 +109,7 @@ namespace ThreadsEVM
             data = new int[2];
             checkData = new bool[2];
         }
+
         override public bool isReady()
         {
             foreach (bool flag in checkData)
@@ -132,23 +118,15 @@ namespace ThreadsEVM
             return false;
         }
 
-        override public List<(int id, int i, int data)> work()
+        override public Output[] work()
         {
             for (int i = 0; i < checkData.Length; i++)
-            {
                 if (checkData[i])
-                {
-                    (int id, int i, int data) lol = output[0];
-                    lol.data = data[i];
-                    output[0] = lol;
-                }
-            }
-            
+                    outputs[0].data = data[i];
 
-            for (int i = 0; i < checkData.Length; i++)
-                checkData[i] = false;
+            Array.Fill(checkData, false);
 
-            return output;
+            return outputs;
         }
     }
 
@@ -160,25 +138,19 @@ namespace ThreadsEVM
             checkData = new bool[2];
         }
 
-        override public List<(int id, int i, int data)> work()
+        override public Output[] work()
         {
-            List<(int id, int i, int data)> res = new List<(int id, int i, int data)>();
+            Output[] res = new Output[1];
 
             if (data[0] != 0)
-            {
-                (int id, int i, int data) lol = output[0];
-                lol.data = data[1];
-                res.Add(lol);
-            }
+                res[0] = outputs[0];            
             else
-            {
-                (int id, int i, int data) lol = output[1];
-                lol.data = data[1];
-                res.Add(lol);
-            }
+                res[0] = outputs[1];
 
-            for (int i = 0; i < checkData.Length; i++)
-                checkData[i] = false;
+            res[0].data = data[1];
+
+            Array.Fill(checkData, false);
+
             return res;
         }
     }
@@ -190,19 +162,16 @@ namespace ThreadsEVM
             data = new int[2];
             checkData = new bool[2];
         }
-        override public List<(int id, int i, int data)> work()
+        override public Output[] work()
         {
-            if (data[0] != 0)
-            {
-                (int id, int i, int data) lol = output[0];
-                lol.data = data[1];
-                output[0] = lol;
-            }
+            Array.Fill(checkData, false);
 
-            for (int i = 0; i < checkData.Length; i++)
-                checkData[i] = false;
-            
-            return output;
+            if (data[0] == 0)
+                return new Output[0];
+
+            outputs[0].data = data[1];
+
+            return outputs;
         }
     }
 
@@ -215,29 +184,17 @@ namespace ThreadsEVM
             checkData = new bool[1];
             checkData[0] = true;
         }
-        override public void reload()
+
+        override public bool isReady()
         {
-            for (int i = 0; i < checkData.Length; i++)
-            {
-                checkData[i] = false;
-            }
-            checkData[0] = true;
+            return input.Count > 0;
         }
 
-
-        override public List<(int id, int i, int data)> work()
+        override public Output[] work()
         {
-            (int id, int i, int data) lol = output[0];
-            lol.data = input.Dequeue();
-            output[0] = lol;
-
-            if (input.Count == 0)
-            {
-                checkData[0] = false;
-            }
-
+            outputs[0].data = input.Dequeue();
             
-            return output;
+            return outputs;
         }
     }
 
@@ -249,10 +206,9 @@ namespace ThreadsEVM
             checkData = new bool[1];
         }
 
-        override public List<(int id, int i, int data)> work()
+        override public Output[] work()
         {
-            // вывод data[0]...
-            return new List<(int id, int i, int data)>();
+            return new Output[0];
         }
     }
 }

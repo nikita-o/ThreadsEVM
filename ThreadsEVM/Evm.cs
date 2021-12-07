@@ -14,7 +14,7 @@ namespace ThreadsEVM
         int[,] matrix;
 
         List<int> input;
-        List<int> output;
+        List<int> output; // not used
 
         TextBox textBox;
 
@@ -25,27 +25,26 @@ namespace ThreadsEVM
             this.input = input;
             this.output = output;
             this.textBox = textBox;
-
-
         }
 
         public void start(Queue<int>[] data)
         {
+            // обновление состояния вершин
             foreach (var top in tops)
-            {
                 top.reload();
-            }
 
+            mem = new Queue<int>();
+
+            // заполняем очереди "входных" вершин
             for (int i = 0; i < input.Count; i++)
             {
                 int id = input[i];
                 InputTop top = (InputTop)tops[id];
                 top.input = data[i];
-            }
 
-            mem = new Queue<int>();
-            foreach (var item in input)
-                mem.Enqueue(item);
+                // в "очередь выполнения" отправляем "входные"
+                mem.Enqueue(id);
+            }
 
             while (mem.Count > 0)
             {
@@ -56,39 +55,30 @@ namespace ThreadsEVM
                 Top top = tops[id];
 
                 // исполнение команды
-                List<(int i, int j, int data)> output = top.work();
+                Top.Output[] outputs = top.work();
 
                 // обновление данных (вносим данные, помечаем флаги)
-                if (output.Count == 0)
-                {
-                    // вывод data[0]
+                if (outputs.Length == 0) // только вершины вывода, могут быть без вывода... 
                     textBox.AppendText(top.data[0].ToString() + "\r\n");
-                }
 
-                foreach (var item in output)
+                foreach (var item in outputs)
                 {
-                    (int i, int j, int d) = item;
-                    tops[i].data[j] = d;
-                    tops[i].checkData[j] = true;
+                    int idTop = item.idTop;
+                    int idIn = item.idIn;
+                    int outData = item.data;
 
-                    if (tops[i].isReady())
-                    {
-                        mem.Enqueue(i);
-                    }
+                    tops[idTop].data[idIn] = outData;
+                    tops[idTop].checkData[idIn] = true;
+
+                    // вызов следующих вершин
+                    if (tops[idTop].isReady())
+                        mem.Enqueue(idTop);
                 }
 
-                // формируем некст вызов в очередь (по матрице)
+                // формируем некст вызов в очередь (по матрице ищем родителя, сообщаем ему, что мы готовы принять его)
                 for (int i = 0; i < tops.Count; i++)
-                {
-                    if (matrix[i, id] != 0)
-                    {
-                        if (tops[i].isReady())
-                        { 
+                    if (matrix[i, id] != 0 && tops[i].isReady())
                             mem.Enqueue(i);
-                        }
-                    }
-                }
-
             }
         }
     }

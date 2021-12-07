@@ -178,20 +178,24 @@ namespace ThreadsEVM
                 //save_str[i][3];
                 (int inp, int outp, Top top) = check(save_str[i][1], save_str[i][2]);
                 id = Int32.Parse(save_str[i][0]);
-                tops[id].output = new List<(int id, int i, int data)>();
+                
+                List<Top.Output> outs = new List<Top.Output>();
 
                 for (int j = 0; j < outp; j++)
                 {
                     string[] string_out = save_str[i][3 + j].Split('-');
                     int out1 = Int32.Parse(string_out[0]);
                     int out2 = Int32.Parse(string_out[1]);
-                    if (out2!= 0 || out2!=1)
+                    if (out2 < 0 || out2 > 1)
                     {
                         throw new Exception($"Wrong out arc, {i} str ");
                     }
-                    tops[id].output.Add((out1, out2, 0));
-
+                    outs.Add(new Top.Output { idTop = out1, idIn = out2, data = 0 });
                 }
+
+                tops[id].outputs = new Top.Output[outs.Count];
+                for (int j = 0; j < outs.Count; j++)
+                    tops[id].outputs[j] = outs[j];
             }
 
 
