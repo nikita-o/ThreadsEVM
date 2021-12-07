@@ -6,15 +6,15 @@ namespace ThreadsEVM
 {
     class Parsing
     {
-        int[,] matrix_inp, matrix_out;
-        List<int> inputs = new List<int>(), outputs = new List<int>();
+        public int[,] matrix_out;
+        public List<int> inputs = new List<int>(), outputs = new List<int>();
         int id,
             out_count,
             inp_count;
-        Top[] tops;
+        public List<Top> tops;
 
         //проверяем максимальное колличество входов и выходов у вершины
-        (int, int, Top) check(String str, string name = "")
+        (int, int, Top) check(String str, string name)
         {
             Top top;
             switch (str.ToLower())
@@ -34,6 +34,7 @@ namespace ThreadsEVM
                     out_count = 1;
                     inp_count = 2;
                     top = new OperTop();
+                    ((OperTop)top).func = check_func(name);
                     break;
                 case "branch":
                     out_count = 2;
@@ -89,9 +90,9 @@ namespace ThreadsEVM
                     return Operations.Small;
                 case "equals":
                     return Operations.Equals;
-                case "consttrue":
+                case "true":
                     return Operations.constTrue;
-                case "constfalse":
+                case "false":
                     return Operations.constFalse;
                 default:
                     throw new Exception("Wrong func name");
@@ -106,7 +107,7 @@ namespace ThreadsEVM
 
             //matrix_inp = new int[text.Length, text.Length];
             matrix_out = new int[text.Length, text.Length];
-            tops = new Top[text.Length];
+            tops = new List<Top>();
             for (int i = 0; i < text.Length; i++)
             {
                 str = text[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -128,6 +129,7 @@ namespace ThreadsEVM
 
 
                 (int inp, int outp, Top top) = check(str[1], str[2]);
+                tops.Add(top);
 
                 for (int j = 0; j < outp; j++)
                 {
@@ -152,7 +154,7 @@ namespace ThreadsEVM
             for (int i = 0; i < text.Length; i++)
             {
                 id = Int32.Parse(save_str[i][0]);
-                (int inp, int outp, Top top) = check(save_str[i][1]);
+                (int inp, int outp, Top top) = check(save_str[i][1], save_str[i][2]);
 
                 if (outp == 1 && inp == 0)
                 {
@@ -175,10 +177,12 @@ namespace ThreadsEVM
             {
                 //save_str[i][3];
                 (int inp, int outp, Top top) = check(save_str[i][1], save_str[i][2]);
+                id = Int32.Parse(save_str[i][0]);
+                tops[id].output = new List<(int id, int i, int data)>();
+
                 for (int j = 0; j < outp; j++)
                 {
                     string[] string_out = save_str[i][3 + j].Split('-');
-                    id = Int32.Parse(save_str[i][0]);
                     int out1 = Int32.Parse(string_out[0]);
                     int out2 = Int32.Parse(string_out[1]);
                     tops[id].output.Add((out1, out2, 0));

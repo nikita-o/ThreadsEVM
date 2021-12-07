@@ -13,6 +13,10 @@ namespace ThreadsEVM
         // Control
         public bool[] checkData; // (pres) - флаги получения входных данных
 
+        Top()
+        {
+        }
+
         virtual public bool isReady()
         {
             foreach (var flag in checkData)

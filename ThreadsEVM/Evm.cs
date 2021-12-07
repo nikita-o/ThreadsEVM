@@ -10,15 +10,15 @@ namespace ThreadsEVM
     {
         Queue<int> mem;
 
-        Top[] tops;
+        List<Top> tops;
         int[,] matrix;
 
-        int[] input;
-        int[] output;
+        List<int> input;
+        List<int> output;
 
         TextBox textBox;
 
-        public Evm(Top[] tops, int[,] matrix, int[] input, int[] output, TextBox textBox)
+        public Evm(ref List<Top> tops, ref int[,] matrix, ref List<int> input, ref List<int> output, ref TextBox textBox)
         {
             this.tops = tops;
             this.matrix = matrix;
@@ -33,7 +33,7 @@ namespace ThreadsEVM
 
         public void start(Queue<int>[] data)
         {
-            for (int i = 0; i < input.Length; i++)
+            for (int i = 0; i < input.Count; i++)
             {
                 int id = input[i];
                 InputTop top = (InputTop)tops[id];
@@ -60,8 +60,8 @@ namespace ThreadsEVM
 
                 foreach (var item in output)
                 {
-                    (int i, int j, int data) = item;
-                    tops[i].data[j] = data;
+                    (int i, int j, int d) = item;
+                    tops[i].data[j] = d;
                     tops[i].checkData[j] = true;
 
                     if (tops[i].isReady())
@@ -71,7 +71,7 @@ namespace ThreadsEVM
                 }
 
                 // формируем некст вызов в очередь (по матрице)
-                for (int i = 0; i < tops.Length; i++)
+                for (int i = 0; i < tops.Count; i++)
                 {
                     if (matrix[i, id] != 0)
                     {
