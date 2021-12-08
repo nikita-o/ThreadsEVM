@@ -14,22 +14,22 @@ namespace ThreadsEVM
         }
 
         // Comand
-        public int[] data; // (opr) - входные данные
-        public Output[] outputs; // (des) - дуги по которым идет результат
+        public int[] Data { get; set; } // (opr) - входные данные
+        public Output[] Outputs { get; set; } // (des) - дуги по которым идет результат
 
         // Control
-        public bool[] checkData; // (pres) - флаги получения входных данных
+        public bool[] CheckData { get; set; } // (pres) - флаги получения входных данных
 
         public Top() {}
 
         public void reload()
         {
-            Array.Fill(checkData, false);
+            Array.Fill(CheckData, false);
         }
 
         virtual public bool isReady()
         {
-            foreach (var flag in checkData)
+            foreach (var flag in CheckData)
                 if (!flag)
                     return false;
             return true;
@@ -44,19 +44,19 @@ namespace ThreadsEVM
 
         public OperTop1(): base()
         {
-            data = new int[1];
-            checkData = new bool[1];
+            Data = new int[1];
+            CheckData = new bool[1];
         }
 
         override public Output[] work()
         {
-            int outData = func(data);
+            int outData = func(Data);
 
-            outputs[0].data = outData;
+            Outputs[0].data = outData;
 
-            Array.Fill(checkData, false);
+            Array.Fill(CheckData, false);
 
-            return outputs;
+            return Outputs;
         }
     }
 
@@ -67,19 +67,19 @@ namespace ThreadsEVM
 
         public OperTop2() : base()
         {
-            data = new int[2];
-            checkData = new bool[2];
+            Data = new int[2];
+            CheckData = new bool[2];
         }
 
         override public Output[] work()
         {
-            int outData = func(data);
+            int outData = func(Data);
 
-            outputs[0].data = outData;
+            Outputs[0].data = outData;
 
-            Array.Fill(checkData, false);
+            Array.Fill(CheckData, false);
 
-            return outputs;
+            return Outputs;
         }
     }
 
@@ -87,18 +87,18 @@ namespace ThreadsEVM
     {
         public BranchTop() : base()
         {
-            data = new int[1];
-            checkData = new bool[1];
+            Data = new int[1];
+            CheckData = new bool[1];
         }
 
         override public Output[] work()
         {
-            outputs[0].data = data[0];
-            outputs[1].data = data[0];
+            Outputs[0].data = Data[0];
+            Outputs[1].data = Data[0];
 
-            Array.Fill(checkData, false);
+            Array.Fill(CheckData, false);
 
-            return outputs;
+            return Outputs;
         }
     }
 
@@ -106,13 +106,13 @@ namespace ThreadsEVM
     {
         public MergeTop() : base()
         {
-            data = new int[2];
-            checkData = new bool[2];
+            Data = new int[2];
+            CheckData = new bool[2];
         }
 
         override public bool isReady()
         {
-            foreach (bool flag in checkData)
+            foreach (bool flag in CheckData)
                 if (flag)
                     return true;
             return false;
@@ -120,13 +120,13 @@ namespace ThreadsEVM
 
         override public Output[] work()
         {
-            for (int i = 0; i < checkData.Length; i++)
-                if (checkData[i])
-                    outputs[0].data = data[i];
+            for (int i = 0; i < CheckData.Length; i++)
+                if (CheckData[i])
+                    Outputs[0].data = Data[i];
 
-            Array.Fill(checkData, false);
+            Array.Fill(CheckData, false);
 
-            return outputs;
+            return Outputs;
         }
     }
 
@@ -134,22 +134,22 @@ namespace ThreadsEVM
     {
         public TFTop() : base()
         {
-            data = new int[2];
-            checkData = new bool[2];
+            Data = new int[2];
+            CheckData = new bool[2];
         }
 
         override public Output[] work()
         {
             Output[] res = new Output[1];
 
-            if (data[0] != 0)
-                res[0] = outputs[0];            
+            if (Data[0] != 0)
+                res[0] = Outputs[0];            
             else
-                res[0] = outputs[1];
+                res[0] = Outputs[1];
 
-            res[0].data = data[1];
+            res[0].data = Data[1];
 
-            Array.Fill(checkData, false);
+            Array.Fill(CheckData, false);
 
             return res;
         }
@@ -159,19 +159,19 @@ namespace ThreadsEVM
     {
         public ValveTop() : base()
         {
-            data = new int[2];
-            checkData = new bool[2];
+            Data = new int[2];
+            CheckData = new bool[2];
         }
         override public Output[] work()
         {
-            Array.Fill(checkData, false);
+            Array.Fill(CheckData, false);
 
-            if (data[0] == 0)
+            if (Data[0] == 0)
                 return new Output[0];
 
-            outputs[0].data = data[1];
+            Outputs[0].data = Data[1];
 
-            return outputs;
+            return Outputs;
         }
     }
 
@@ -181,8 +181,8 @@ namespace ThreadsEVM
 
         public InputTop() : base()
         {
-            checkData = new bool[1];
-            checkData[0] = true;
+            CheckData = new bool[1];
+            CheckData[0] = true;
         }
 
         override public bool isReady()
@@ -192,9 +192,9 @@ namespace ThreadsEVM
 
         override public Output[] work()
         {
-            outputs[0].data = input.Dequeue();
+            Outputs[0].data = input.Dequeue();
             
-            return outputs;
+            return Outputs;
         }
     }
 
@@ -202,8 +202,8 @@ namespace ThreadsEVM
     {
         public OutputTop() : base()
         {
-            data = new int[1];
-            checkData = new bool[1];
+            Data = new int[1];
+            CheckData = new bool[1];
         }
 
         override public Output[] work()

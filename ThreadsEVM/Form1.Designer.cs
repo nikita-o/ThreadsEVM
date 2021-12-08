@@ -43,6 +43,7 @@
             // 
             // textBox1
             // 
+            this.textBox1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBox1.Location = new System.Drawing.Point(12, 87);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
@@ -51,6 +52,7 @@
             // 
             // textBox2
             // 
+            this.textBox2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBox2.Location = new System.Drawing.Point(327, 87);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
@@ -59,6 +61,7 @@
             // 
             // textBox3
             // 
+            this.textBox3.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.textBox3.Location = new System.Drawing.Point(655, 87);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
