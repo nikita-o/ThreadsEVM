@@ -43,15 +43,25 @@ namespace ThreadsEVM
         // запуск
         private void button2_Click(object sender, EventArgs e)
         {
-            String[] text = textBox2.Lines;
+            if (textBox2.Lines.Length < evm.Input.Count)
+            {
+                textBox3.AppendText("Недостаточно входных данных.\r\n");
+                return;
+            }
+
+
+            // TODO: это бы перенести в метод EVM.
+            string[] text = textBox2.Lines;
             Queue<int>[] data = new Queue<int>[text.Length];
             for (int i = 0; i < data.Length; i++)
             {
                 data[i] = new Queue<int>();
-                String[] s = text[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                string[] s = text[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 foreach (var ps in s)
                     data[i].Enqueue(int.Parse(ps));
             }
+            //
+
             evm.start(data);
         }
 

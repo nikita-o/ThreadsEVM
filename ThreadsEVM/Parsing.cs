@@ -123,10 +123,8 @@ namespace ThreadsEVM
                 }
                 catch (FormatException)
                 {
-
                     throw new Exception($"Wrong Format, {i} str ");
                 }
-
 
                 (int inp, int outp, Top top) = check(str[1], str[2]);
                 tops.Add(top);
@@ -137,7 +135,6 @@ namespace ThreadsEVM
                     int out1 = Int32.Parse(string_out[0]);
                     matrix_out[id, out1] = 1;
                 }
-
             }
             ////PROVERKA
             int[] line_sum = new int[text.Length], column_sum = new int[text.Length];
@@ -193,16 +190,10 @@ namespace ThreadsEVM
                     outs.Add(new Top.Output { idTop = out1, idIn = out2, data = 0 });
                 }
 
-                tops[id].outputs = new Top.Output[outs.Count];
+                tops[id].Outputs = new Top.Output[outs.Count];
                 for (int j = 0; j < outs.Count; j++)
-                    tops[id].outputs[j] = outs[j];
+                    tops[id].Outputs[j] = outs[j];
             }
-
-
-
-
-
         }
-
     }
 }

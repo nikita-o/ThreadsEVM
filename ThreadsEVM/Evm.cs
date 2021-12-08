@@ -5,7 +5,6 @@ using System.Windows.Forms;
 
 namespace ThreadsEVM
 {
-
     class Evm
     {
         Queue<int> mem;
@@ -13,7 +12,8 @@ namespace ThreadsEVM
         List<Top> tops;
         int[,] matrix;
 
-        List<int> input;
+        //private List<int> input;
+        public List<int> Input { get; set;}
         List<int> output; // not used
 
         TextBox textBox;
@@ -22,10 +22,11 @@ namespace ThreadsEVM
         {
             this.tops = tops;
             this.matrix = matrix;
-            this.input = input;
+            this.Input = input;
             this.output = output;
             this.textBox = textBox;
         }
+
 
         public void start(Queue<int>[] data)
         {
@@ -36,9 +37,9 @@ namespace ThreadsEVM
             mem = new Queue<int>();
 
             // заполняем очереди "входных" вершин
-            for (int i = 0; i < input.Count; i++)
+            for (int i = 0; i < Input.Count; i++)
             {
-                int id = input[i];
+                int id = Input[i];
                 InputTop top = (InputTop)tops[id];
                 top.input = data[i];
 
@@ -59,7 +60,7 @@ namespace ThreadsEVM
 
                 // обновление данных (вносим данные, помечаем флаги)
                 if (outputs.Length == 0) // только вершины вывода, могут быть без вывода... 
-                    textBox.AppendText(top.data[0].ToString() + "\r\n");
+                    textBox.AppendText(top.Data[0].ToString() + "\r\n");
 
                 foreach (var item in outputs)
                 {
@@ -67,8 +68,8 @@ namespace ThreadsEVM
                     int idIn = item.idIn;
                     int outData = item.data;
 
-                    tops[idTop].data[idIn] = outData;
-                    tops[idTop].checkData[idIn] = true;
+                    tops[idTop].Data[idIn] = outData;
+                    tops[idTop].CheckData[idIn] = true;
 
                     // вызов следующих вершин
                     if (tops[idTop].isReady())
@@ -80,6 +81,8 @@ namespace ThreadsEVM
                     if (matrix[i, id] != 0 && tops[i].isReady())
                             mem.Enqueue(i);
             }
+
+            textBox.AppendText("Программа завершена.\r\n");
         }
     }
 }
