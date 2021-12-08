@@ -38,12 +38,12 @@ namespace ThreadsEVM
             return --data[0];
         }
 
-        static public int  More(int[] data)
+        static public int  Max(int[] data)
         {
             return data[0] > data[1] ? data[0] : data[1];
         }
 
-        static public int Small(int[] data)
+        static public int Min(int[] data)
         {
             return data[0] < data[1] ? data[0] : data[1];
         }

@@ -63,7 +63,6 @@ namespace ThreadsEVM
                     break;
                 default:
                     throw new Exception("Wrong top name");
-                    break;
             }
             return (inp_count, out_count, top);
         }
@@ -85,10 +84,10 @@ namespace ThreadsEVM
                     return Operations.Inc;
                 case "dec":
                     return Operations.Dec;
-                case "more":
-                    return Operations.More;
-                case "small":
-                    return Operations.Small;
+                case "max":
+                    return Operations.Max;
+                case "min":
+                    return Operations.Min;
                 case "equals":
                     return Operations.Equals;
                 case "true":
@@ -97,7 +96,6 @@ namespace ThreadsEVM
                     return Operations.constFalse;
                 default:
                     throw new Exception("Wrong func name");
-                    break;
             }
         }
         public void parsing(String[] text)
