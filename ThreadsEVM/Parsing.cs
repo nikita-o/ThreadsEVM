@@ -68,6 +68,7 @@ namespace ThreadsEVM
             return (inp_count, out_count, top);
         }
 
+        //проверяем имя функции
         Operations.Func check_func(String str)
         {
             switch (str.ToLower())
@@ -103,11 +104,9 @@ namespace ThreadsEVM
         {
             string[] str;
             List<string[]> save_str = new List<string[]>();
-
-
-            //matrix_inp = new int[text.Length, text.Length];
             matrix_out = new int[text.Length, text.Length];
             tops = new List<Top>();
+
             for (int i = 0; i < text.Length; i++)
             {
                 str = text[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -128,7 +127,6 @@ namespace ThreadsEVM
 
                 (int inp, int outp, Top top) = check(str[1], str[2]);
                 tops.Add(top);
-
                 for (int j = 0; j < outp; j++)
                 {
                     string[] string_out = str[3 + j].Split('-');
@@ -136,11 +134,10 @@ namespace ThreadsEVM
                     matrix_out[id, out1] = 1;
                 }
             }
-            ////PROVERKA
+            ////Check
             int[] line_sum = new int[text.Length], column_sum = new int[text.Length];
             for (int i = 0; i < text.Length; i++)
             {
-
                 for (int j = 0; j < text.Length; j++)
                 {
                     line_sum[i] += matrix_out[i, j];
@@ -169,10 +166,8 @@ namespace ThreadsEVM
                 }
             }
             ////////////////////////////////////////////////////////////////
-            ///
             for (int i = 0; i < text.Length; i++)
             {
-                //save_str[i][3];
                 (int inp, int outp, Top top) = check(save_str[i][1], save_str[i][2]);
                 id = Int32.Parse(save_str[i][0]);
                 
